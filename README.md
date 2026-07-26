@@ -1,58 +1,179 @@
-GLITCH.ENG | Signal Distortion Unit
-A browser-based, privacy-focused visual destruction tool designed for the modern web.
-⚡ Origin & Inspiration
-GLITCH.ENG was born out of a specific frustration: the lack of powerful, granular glitch art tools for mobile creators. While desktop users have access to processing scripts and complex software like After Effects, mobile users are often stuck with generic "filter" apps that apply pre-baked overlays.
-We wanted to bring the raw, mathematical chaos of pixel sorting, buffer manipulation, and channel drifting directly to the browser. The goal was to create a "zero-upload" environment—where no image ever leaves your device—allowing for complete privacy and instant feedback.
-It started as a simple experiment to sort pixels by brightness and evolved into a comprehensive suite of 6 unique distortion algorithms, specifically optimized to handle modern mobile photography formats like Apple's HEIC, bridging the gap between high-fidelity camera hardware and low-fidelity digital aesthetics.
-🛠️ How to Use
-GLITCH.ENG is a single-file application. There is no server to set up, no dependencies to install, and no build process required.
-Launch: Simply open index.html in any modern web browser (Chrome, Safari, Firefox).
-Upload: Click [ UPLOAD SOURCE ] to select an image.
-Note: Supports JPG, PNG, WebP, and HEIC (iPhone) files.
-Distort: Select an algorithm from the sidebar and adjust sliders to taste.
-Export: Click [ EXPORT ARTIFACT ] to save the result as a PNG.
-Backup: Click [ SYSTEM BACKUP ] to download a copy of the engine itself.
-🎛️ Algorithm Guide
-The engine features 6 distinct processing modes, each manipulating the image data differently:
-1. Data Mosher
-The Classic. Uses luma-gated pixel sorting combined with horizontal tearing. It isolates bright or dark areas of the image and "drags" them across the canvas, simulating a corrupted video keyframe.
-Best for: Creating "melting" effects and liquid textures.
-2. Spectral Drift
-The Retrograde. Focuses on RGB channel separation and quantization. It offsets the Red, Green, and Blue channels spatially while reducing the color palette, mimicking a magnet held up to a CRT monitor.
-Best for: VHS aesthetics, chromatic aberration, and lo-fi looks.
-3. Palette Collapse
-The Crusher. Uses a K-Means clustering approximation to reduce the image to a limited set of colors, then "rebounds" those colors into incorrect channels.
-Best for: Posterized, high-contrast, and pop-art styles.
-4. Scanline Failure
-The Hardware glitch. Simulates a buffer overflow where rows of pixels are repeated, skipped, or decayed. It mimics a loose ribbon cable in a digital display.
-Best for: Tech-noir, surveillance camera looks, and subtle interference.
-5. Desync Echo
-The Ghost. Creates a feedback loop where previous versions of the image are blended back on top with a slight offset, creating a motion-blur or "ghosting" trail.
-Best for: Dreamy, ethereal, or drug-induced visual states.
-6. Void Rot
-The Destroyer. A heavy combination of structural tearing and decay scanlines. It aggressively shreds the image structure.
-Best for: Horror themes, heavy distortion, and completely abstracting the source.
-🎚️ Parameter Guide
-Main Modulation
-INTENSITY: The global strength multiplier. Controls how "much" of the effect is applied (e.g., how far pixels move, how many scanlines fail).
-LUMA GATE: The threshold filter.
-Low Value: Effects apply to almost everything.
-High Value: Effects only apply to the brightest parts of the image.
-CHROMA DRIFT: Controls the distance between Red, Green, and Blue channels. Crank this up for heavy color fringing.
-Structural Controls
-HORZ / VERT / BOTH: Determines the direction of pixel sorting and tearing.
-RUNS vs WINDOW:
-Runs: Sorts pixels until a threshold is met (more organic/streaky).
-Window: Sorts pixels in fixed blocks (more grid-like/digital).
-🧩 Extras & Advanced Features
-Masking Mode: Click the [ MASK ] button in the preview window to draw a box. The glitch effects will only apply inside that box, leaving the rest of the image untouched.
-Color Depth (Advanced Menu): Manually reduce the bit-depth of Red or Blue channels. Useful for emulating 8-bit or 16-bit era graphics.
-Seed Reroll: The chaos is deterministic. If you don't like how a specific glitch looks, hit [ REROLL SEED ] to get a new random variation of the same effect.
-HEIC Support: Integrated heic2any library automatically converts iPhone photos to readable data on the fly.
-🐛 Known Issues / Bugs
-High-Res Performance: Processing 12MP+ images (4000x3000) heavily relies on your device's CPU. On older mobile devices, dragging sliders might feel slightly sluggish as the engine re-calculates millions of pixels in real-time.
-HEIC Conversion Speed: When uploading a generic HEIC file, there is a 1-3 second delay while the browser converts it to JPEG. This is normal behavior.
-Memory Limits: Extremely large panoramas (>8000px wide) may crash the mobile browser tab due to RAM limits.
-📄 License
-This project is open-source. You are free to modify, distribute, and use it for personal or commercial art.
-Engineered for signal loss.
+# GLITCH.ENG
+
+**Signal Distortion Unit** is a browser-based image corruption engine for creating glitch art without uploading source images to a remote server.
+
+It turns ordinary images into damaged signals through pixel sorting, RGB displacement, palette reduction, scanline failures, echo trails, and structural tearing. The interface is designed to work on both desktop and mobile browsers while keeping the editing loop immediate and local.
+
+## What It Does
+
+GLITCH.ENG provides six destructive image-processing modes:
+
+| Algorithm | Processing behavior | Useful for |
+| --- | --- | --- |
+| **Data Mosher** | Luma-gated pixel sorting with directional displacement | Melted forms, streaks, and dragged textures |
+| **Spectral Drift** | RGB-channel offsets and channel quantization | Chromatic separation, CRT damage, and lo-fi color fracture |
+| **Palette Collapse** | Chunk-based posterization and palette rebinding | Reduced-color graphics, hard contrast, and pop-art corruption |
+| **Scanline Failure** | Repeated, skipped, frozen, or weakened pixel bands | Display faults, surveillance noise, and broken-screen effects |
+| **Desync Echo** | Offset image feedback blended into the current frame | Ghost trails, motion residue, and layered silhouettes |
+| **Void Rot** | Aggressive tearing combined with structural decay | Heavy abstraction, horror imagery, and near-total source destruction |
+
+## Core Features
+
+- Local, browser-side image processing
+- Six independent distortion algorithms
+- Live parameter adjustment
+- Horizontal, vertical, and combined structural processing
+- Run-based and fixed-window pixel sorting
+- Luma threshold and edge-gating controls
+- RGB bit-depth reduction and chroma drift
+- Palette, scanline, echo, and rebinding controls
+- Selection masking for localized damage
+- Before-and-after comparison views
+- Signal histogram display
+- Deterministic seeds with reroll support
+- PNG export
+- Responsive desktop and mobile interface
+
+## Privacy Model
+
+Image decoding, processing, preview generation, and export happen in the browser. GLITCH.ENG does not include an application server or an image-upload pipeline.
+
+The interface does load framework, styling, and font resources from external CDNs, so opening the application may still create normal network requests for those dependencies. Your selected image is processed locally by the browser.
+
+## Running the Project
+
+No build step or package installation is required.
+
+### Option 1: Open directly
+
+1. Download or clone the repository.
+2. Open `index.html` in a modern browser.
+3. Select an image using the upload control.
+4. Choose an algorithm and adjust its parameters.
+5. Export the processed result as a PNG.
+
+### Option 2: Serve locally
+
+Some browsers apply stricter rules to files opened through `file://`. A small local web server provides the most consistent behavior.
+
+```bash
+python3 -m http.server 8080
+```
+
+Then open:
+
+```text
+http://localhost:8080
+```
+
+## Supported Input
+
+The current version accepts browser-readable raster image formats such as:
+
+- JPEG
+- PNG
+- WebP
+
+**HEIC is not currently supported.** Convert HEIC images to JPEG or PNG before importing them.
+
+## Processing Limits
+
+Imported images are resized for processing when either dimension exceeds 1,920 pixels. This keeps the editing loop responsive and reduces browser memory pressure, especially on mobile devices.
+
+Performance still depends on image complexity, algorithm choice, and device hardware. Large images and aggressive settings may take longer to recalculate.
+
+## Controls
+
+### Primary modulation
+
+- **Intensity** controls the overall strength of the selected algorithm.
+- **Luma Gate** determines which brightness ranges are affected.
+- **Chroma Drift** controls RGB-channel separation.
+- **Seed** controls deterministic variation. Rerolling produces a different result without changing the rest of the setup.
+
+### Structural processing
+
+- **HORZ** processes rows.
+- **VERT** processes columns.
+- **BOTH** combines both directions.
+- **RUNS** builds variable-length distortion segments from threshold conditions.
+- **WINDOW** processes fixed-size blocks for a more mechanical result.
+
+### Advanced processing
+
+Depending on the selected algorithm, advanced controls expose:
+
+- Window and run size
+- Edge gating
+- Per-channel bit depth
+- Dithering
+- Channel rebinding
+- Palette size and chunking
+- Scanline mode, count, and strength
+- Echo blend mode, shift, alpha, and banding
+
+### Masking
+
+Switch to mask mode and draw a rectangular selection over the preview. Processing is then limited to that selected region. Clear the mask to return to full-frame distortion.
+
+## Project Structure
+
+```text
+signal-distortion/
+├── index.html
+└── js/
+    ├── app.js
+    ├── config.js
+    ├── algorithms/
+    ├── core/
+    ├── effects/
+    └── ui/
+```
+
+- `index.html` loads the interface and browser dependencies.
+- `js/app.js` manages application state, image loading, preview processing, masking, comparison, and export.
+- `js/config.js` defines algorithms and default parameters.
+- `js/algorithms/` contains the six processing pipelines.
+- `js/effects/` contains reusable image-manipulation operations.
+- `js/core/` contains structural sorting and shared utilities.
+- `js/ui/` contains starter-image and interface support code.
+
+## Browser Dependencies
+
+The application currently loads the following resources from CDNs:
+
+- React 18
+- ReactDOM 18
+- Babel Standalone
+- Tailwind CSS
+- Google Fonts
+
+Because Babel transforms JSX in the browser, this project favors portability and easy experimentation over production bundle optimization.
+
+## Known Constraints
+
+- HEIC files are rejected by the current loader.
+- Processing runs on the browser's main thread and may pause briefly on slower devices.
+- Export output is PNG.
+- Very aggressive settings can intentionally destroy most recognizable source detail.
+- Direct `file://` execution may behave differently across browsers. Use a local server when necessary.
+
+## Development Direction
+
+Potential next steps include:
+
+- Web Worker or OffscreenCanvas processing
+- Native HEIC conversion
+- Preset import and export
+- Multi-effect processing chains
+- Undo and history snapshots
+- Full-resolution background export
+- Offline dependency bundling
+
+## License
+
+No license file is currently included in this repository. Until one is added, standard copyright rules apply.
+
+---
+
+**Engineered for signal loss.**
