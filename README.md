@@ -101,7 +101,7 @@ Performance still depends on image complexity, algorithm choice, and device hard
 
 ### Advanced processing
 
-Depending on the selected algorithm, advanced controls expose:
+Depending on the selected algorithm, the interface exposes controls for:
 
 - Window and run size
 - Edge gating
@@ -112,9 +112,21 @@ Depending on the selected algorithm, advanced controls expose:
 - Scanline mode, count, and strength
 - Echo blend mode, shift, alpha, and banding
 
+> **Implementation note:** Some controls are visible before their parameter wiring is complete. In the current code, Desync Echo's **Subtract**, **Mix**, and **Banded Echo** options do not change the effect because the algorithm and effect layers use different parameter names. Scanline **Strength** does not affect **Repeat** mode. These controls should be treated as provisional until the implementation is corrected.
+
 ### Masking
 
 Switch to mask mode and draw a rectangular selection over the preview. Processing is then limited to that selected region. Clear the mask to return to full-frame distortion.
+
+## Preview and Export
+
+The top-bar view controls provide three inspection modes:
+
+- **SRC** shows the original source image.
+- **SPLIT** overlays the source and processed result with a draggable comparison divider.
+- **RES** shows the processed result.
+
+Select **EXPORT ARTIFACT** to download the current processed canvas as a timestamped PNG.
 
 ## Project Structure
 
@@ -138,6 +150,24 @@ signal-distortion/
 - `js/core/` contains structural sorting and shared utilities.
 - `js/ui/` contains starter-image and interface support code.
 
+## Processing Pipeline
+
+```text
+source image
+    ↓
+canvas draw
+    ↓
+ImageData pixel buffer
+    ↓
+selected algorithm
+    ↓
+canvas update
+    ↓
+PNG preview and export
+```
+
+Processing occurs on the browser main thread. Parameter changes automatically recalculate the pixel buffer after a short delay.
+
 ## Browser Dependencies
 
 The application currently loads the following resources from CDNs:
@@ -148,20 +178,44 @@ The application currently loads the following resources from CDNs:
 - Tailwind CSS
 - Google Fonts
 
-Because Babel transforms JSX in the browser, this project favors portability and easy experimentation over production bundle optimization.
+Because Babel transforms JSX in the browser, this project favors portability and easy experimentation over production bundle optimization. The current build normally requires an internet connection when it starts unless these dependencies are hosted locally.
 
 ## Known Constraints
 
 - HEIC files are rejected by the current loader.
+- Inputs larger than 1,920 pixels on either axis are downscaled before processing and export.
 - Processing runs on the browser's main thread and may pause briefly on slower devices.
-- Export output is PNG.
-- Very aggressive settings can intentionally destroy most recognizable source detail.
+- Desync Echo's Subtract, Mix, and Banded Echo controls are currently not wired to the effect-layer parameter names.
+- Scanline Strength currently has no effect in Repeat mode.
+- Export output is PNG only.
+- Project files, presets, and undo history are not currently saved.
 - Direct `file://` execution may behave differently across browsers. Use a local server when necessary.
+- The CDN-based build is not fully offline and may be affected by content blockers, network restrictions, or CDN outages.
+
+## Development
+
+Most changes fall into one of these areas:
+
+- Add shared pixel operations in `js/effects/`
+- Add or revise composite algorithms in `js/algorithms/`
+- Register defaults and algorithm metadata in `js/config.js`
+- Update controls and processing flow in `js/app.js`
+
+When adding a new algorithm:
+
+1. Implement its runner in `js/algorithms/`.
+2. Expose it through `window.GlitchAlgorithms`.
+3. Load its script in `index.html` before `js/app.js`.
+4. Register its ID, name, and description in `js/config.js`.
+5. Add the runner to `algorithmRunners` in `js/app.js`.
+6. Document any mode-specific controls and known limitations here.
 
 ## Development Direction
 
 Potential next steps include:
 
+- Correct the Desync Echo parameter mapping
+- Apply Scanline Strength consistently across all scanline modes
 - Web Worker or OffscreenCanvas processing
 - Native HEIC conversion
 - Preset import and export
