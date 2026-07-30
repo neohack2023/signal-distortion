@@ -1,6 +1,7 @@
 (() => {
   const { useState, useRef, useEffect, useCallback } = React;
   const { DEFAULT_PARAMS, ALGORITHMS, SORT_DIRECTIONS, SEGMENT_MODES } = window.GlitchConfig;
+  const { clamp01 } = window.GlitchCore;
   const { createStarterImage, hideLoader } = window.GlitchUI;
   const { generateHistogram } = window.GlitchEffects;
   const {
@@ -20,6 +21,21 @@
     desync_echo: runDesyncEcho,
     void_rot: runVoidRot,
   };
+
+  const normalizeNumber = (value, fallback = 0) => {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : fallback;
+  };
+
+  const sanitizeParams = (rawParams) => ({
+    ...rawParams,
+    intensity: clamp01(normalizeNumber(rawParams.intensity)),
+    threshold: clamp01(normalizeNumber(rawParams.threshold)),
+    drift: clamp01(normalizeNumber(rawParams.drift)),
+    scanlineStrength: clamp01(normalizeNumber(rawParams.scanlineStrength)),
+    echoAlpha: clamp01(normalizeNumber(rawParams.echoAlpha)),
+    dither: clamp01(normalizeNumber(rawParams.dither)),
+  });
 
   const GlitchEngine = () => {
     const [sourceImage, setSourceImage] = useState(null);
@@ -109,9 +125,10 @@
           setHistogram(generateHistogram(data));
 
           const bounds = currentSelection || null;
-          const runner = algorithmRunners[currentParams.algorithm];
+          const safeParams = sanitizeParams(currentParams);
+          const runner = algorithmRunners[safeParams.algorithm];
           if (runner) {
-            runner(data, w, h, currentParams, bounds);
+            runner(data, w, h, safeParams, bounds);
           }
 
           ctx.putImageData(imageData, 0, 0);
